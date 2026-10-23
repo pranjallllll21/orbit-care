@@ -8,6 +8,7 @@ import { mountPatientDetail } from './views/patientDetail.js';
 import { mountDischargeQueue } from './views/dischargeQueue.js';
 import { mountAdmissions } from './views/admissions.js';
 import { mountAnalytics } from './views/analytics.js';
+import { mountPatientDirectory } from './views/patientDirectory.js';
 
 const app = document.querySelector('#app');
 let session = JSON.parse(sessionStorage.getItem('orbitcare-session') || 'null');
@@ -64,6 +65,7 @@ function shellView(route) {
   if (route === 'discharge-queue' && canAccess(session.role, route)) mountDischargeQueue(document.querySelector('.discharge-queue-view'), { toast, confirmModal });
   if (route === 'admissions' && canAccess(session.role, route)) mountAdmissions(document.querySelector('.admissions-view'), { toast });
   if (route === 'analytics' && canAccess(session.role, route)) mountAnalytics(document.querySelector('.analytics-view'));
+  if (route === 'patient-detail' && canAccess(session.role, route)) mountPatientDirectory(document.querySelector('.patient-directory-view'));
   document.querySelector('#logout').onclick = () => confirmModal('Switch role?', 'Your current demo session will be ended.', () => { session = null; sessionStorage.removeItem('orbitcare-session'); window.location.hash = '#/login'; toast('Session ended', 'warning'); });
   document.querySelector('#reset-demo').onclick = () => confirmModal('Reset demo data?', 'All local demo readings will return to the seeded facility state.', () => { resetDemoData(); window.location.reload(); });
   document.querySelector('#mobile-menu').onclick = () => document.querySelector('.sidebar').classList.toggle('open');
@@ -80,6 +82,7 @@ function pagePlaceholder(route, store) {
   if (route === 'discharge-queue' && !noAccess) return '<div class="discharge-queue-view"></div>';
   if (route === 'admissions' && !noAccess) return '<div class="admissions-view"></div>';
   if (route === 'analytics' && !noAccess) return '<div class="analytics-view"></div>';
+  if (route === 'patient-detail' && !noAccess) return '<div class="patient-directory-view"></div>';
   return `<section class="placeholder-panel ${noAccess ? 'access-denied' : ''}"><div class="placeholder-orbit">${noAccess ? '⊘' : metaIcon(route)}</div><div><p class="eyebrow">${copy[2]}</p><h2>${noAccess ? 'No access here' : copy[0]}</h2><p>${noAccess ? 'Your role does not include this route. Choose an item from the sidebar to continue.' : copy[1]}</p>${noAccess ? '<a class="button button-primary" href="#/ward-map">Return to Ward Map</a>' : `<div class="placeholder-line"><span></span><span></span><span></span></div>`}</div></section>`;
 }
 function metaIcon(route) { return routeMeta[route]?.icon || '◎'; }
